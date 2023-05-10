@@ -1,9 +1,8 @@
 import React from 'react'
+import { MapPage } from './pages/MapPage'
 
 export const MapsApp = () => {
   return (
-    <div>
-      <h1>Hello world!</h1>
-    </div>
+    <MapPage />
   )
 }
