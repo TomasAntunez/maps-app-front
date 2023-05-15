@@ -30,10 +30,12 @@ export const useMapbox = (startingPoint) => {
 
 
   // Function to add markers
-  const addMarker = useCallback( ({ lngLat: {lat, lng} }) => {
+  const addMarker = useCallback( ( event, id ) => {
+
+    const { lng, lat } = event.lngLat || event;
 
     const marker = new mapboxgl.Marker();
-    marker.id = uuid(); // TODO: if the mark already has id
+    marker.id = id ?? uuid();
 
     marker
       .setLngLat([ lng, lat ])
@@ -42,12 +44,13 @@ export const useMapbox = (startingPoint) => {
 
     markers.current[ marker.id ] = marker;
 
-    // TODO: If marker has ID don't emit
-    newMarker.current.next({
-      id: marker.id,
-      lat,
-      lng
-    });
+    if ( !id ) {
+      newMarker.current.next({
+        id: marker.id,
+        lat,
+        lng
+      });
+    }
 
     // Listen to marker movements
     marker.on( 'drag', ({ target }) => {
@@ -55,6 +58,12 @@ export const useMapbox = (startingPoint) => {
       const { lat,lng } = target.getLngLat();
       markerMovement.current.next({ id, lat, lng });
     });
+  }, []);
+
+
+  // Function to update marker location
+  const updateLocation = useCallback( ({ id, lng, lat }) => { 
+    markers.current[ id ].setLngLat([ lng, lat ]);
   }, []);
 
 
@@ -88,6 +97,7 @@ export const useMapbox = (startingPoint) => {
 
   return {
     addMarker,
+    updateLocation,
     coords,
     newMarker$: newMarker.current,
     markerMovement$: markerMovement.current,

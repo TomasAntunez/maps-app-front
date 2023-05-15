@@ -1,8 +1,13 @@
 import React from 'react'
+
 import { MapPage } from './pages/MapPage'
+import { SocketProvider } from './context/SocketProvider';
+
 
 export const MapsApp = () => {
   return (
-    <MapPage />
+    <SocketProvider>
+      <MapPage />
+    </SocketProvider>
   )
 }
